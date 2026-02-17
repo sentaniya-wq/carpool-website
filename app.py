@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, session
 from pymongo import MongoClient
 import certifi
+import os
 
 MONGO_URL = "mongodb+srv://carpool-db-user:Welcome1$@carpool-cluster.hacthov.mongodb.net/?appName=carpool-cluster"
 
@@ -69,4 +70,6 @@ def view_rides():
     all_rides = list(rides.find({"available": True}))
     return render_template("rides.html", rides=all_rides)
 
-app.run(debug=True)
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
