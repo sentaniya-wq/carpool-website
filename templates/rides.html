@@ -1,0 +1,13 @@
+<h2>Available Rides</h2>
+
+{% for ride in rides %}
+  <div style="border:1px solid black; margin:10px; padding:10px;">
+    <b>Parent:</b> {{ride.name}} <br>
+    <b>Day:</b> {{ride.day}} <br>
+    <b>Seats:</b> {{ride.seats}} <br>
+    <b>Area:</b> {{ride.area}} <br>
+    <b>Phone:</b> {{ride.phone}} <br>
+  </div>
+{% endfor %}
+
+<a href="/dashboard">Back</a>

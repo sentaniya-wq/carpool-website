@@ -1,0 +1,20 @@
+<h2>Welcome {{name}}</h2>
+
+<h3>Add Carpool Slot</h3>
+<form method="POST" action="/add-ride">
+  Day:
+  <select name="day">
+    <option>Monday</option>
+    <option>Tuesday</option>
+    <option>Wednesday</option>
+    <option>Thursday</option>
+    <option>Friday</option>
+  </select><br>
+
+  Seats: <input name="seats"><br>
+  Area: <input name="area"><br>
+
+  <button type="submit">Add Ride</button>
+</form>
+
+<a href="/rides">View All Rides</a>
