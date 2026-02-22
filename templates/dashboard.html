@@ -1,20 +1,59 @@
-<h2>Welcome {{name}}</h2>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
 
-<h3>Add Carpool Slot</h3>
-<form method="POST" action="/add-ride">
-  Day:
-  <select name="day">
-    <option>Monday</option>
-    <option>Tuesday</option>
-    <option>Wednesday</option>
-    <option>Thursday</option>
-    <option>Friday</option>
-  </select><br>
+<div class="container">
+  <h1> Carpool Dashboard</h1>
 
-  Seats: <input name="seats"><br>
-  Area: <input name="area"><br>
+  <p>Welcome <b>{{ name }}</b></p>
 
-  <button type="submit">Add Ride</button>
-</form>
+  <h3>Add Carpool Slot</h3>
 
-<a href="/rides">View All Rides</a>
+  <form method="POST" action="/add-ride">
+
+    <label>Day</label>
+    <select name="day">
+      <option>Monday</option>
+      <option>Tuesday</option>
+      <option>Wednesday</option>
+      <option>Thursday</option>
+      <option>Friday</option>
+    </select>
+
+    <label>Date</label>
+    <input type="date" name="date" required>
+
+    <label>Seats Available</label>
+    <input type="number" name="seats" required>
+
+    <label>Society Name</label>
+    <input type="text" name="society" required>
+
+    <label>Area</label>
+    <input type="text" name="area" required>
+
+    <hr>
+
+    <h4>Student Details</h4>
+
+    <label>Student Name</label>
+    <input type="text" name="student_name" required>
+
+    <label>Section</label>
+    <input type="text" name="section" required>
+
+    <button type="submit">Add Ride</button>
+  </form>
+
+  <br>
+  <a href="/rides"><button>View All Rides</button></a>
+  <a href="/logout"><button class="secondary">Logout</button></a>
+
+</div>
+
+</body>
+</html>

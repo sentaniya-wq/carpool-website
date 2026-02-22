@@ -1,9 +1,29 @@
-<h2>Parent Registration</h2>
-<form method="POST">
-  Name: <input name="name"><br>
-  Phone: <input name="phone"><br>
-  Area: <input name="area"><br>
-  Password: <input name="password" type="password"><br>
-  <button type="submit">Register</button>
-</form>
-<a href="/login">Login</a>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Register</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container">
+  <h1> Parent Registration</h1>
+
+  <form method="POST">
+    <label>Parent Name</label>
+    <input type="text" name="name" required>
+
+    <label>Phone Number</label>
+    <input type="text" name="phone" required>
+
+    <label>Password</label>
+    <input type="password" name="password" required>
+
+    <button type="submit">Register</button>
+  </form>
+
+  <a href="/login"><button class="secondary">Back to Login</button></a>
+</div>
+
+</body>
+</html>

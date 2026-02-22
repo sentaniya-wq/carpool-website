@@ -1,7 +1,27 @@
-<h2>Login</h2>
-<form method="POST">
-  Phone: <input name="phone"><br>
-  Password: <input name="password" type="password"><br>
-  <button type="submit">Login</button>
-</form>
-<a href="/register">Register</a>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container">
+  <h1> Carpool Login</h1>
+
+  <form method="POST">
+    <label>Phone Number</label>
+    <input type="text" name="phone" required>
+
+    <label>Password</label>
+    <input type="password" name="password" required>
+
+    <button type="submit">Login</button>
+  </form>
+
+  <p>New parent?</p>
+  <a href="/register"><button class="secondary">Register Here</button></a>
+</div>
+
+</body>
+</html>

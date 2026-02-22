@@ -1,13 +1,73 @@
-<h2>Available Rides</h2>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>All Rides</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
 
-{% for ride in rides %}
-  <div style="border:1px solid black; margin:10px; padding:10px;">
-    <b>Parent:</b> {{ride.name}} <br>
-    <b>Day:</b> {{ride.day}} <br>
-    <b>Seats:</b> {{ride.seats}} <br>
-    <b>Area:</b> {{ride.area}} <br>
-    <b>Phone:</b> {{ride.phone}} <br>
-  </div>
-{% endfor %}
+<div class="container">
+  <h1> Available Carpool Rides</h1>
 
-<a href="/dashboard">Back</a>
+  <a href="/dashboard"><button class="secondary">Back to Dashboard</button></a>
+  <a href="/logout"><button class="secondary">Logout</button></a>
+
+  {% if admin %}
+    <a href="/delete-all">
+      <button class="danger">Delete All Rides (Admin)</button>
+    </a>
+  {% endif %}
+
+  <hr>
+
+  {% for ride in rides %}
+    <div class="ride-card">
+
+      <h3>{{ ride.day }} - {{ ride.date }}</h3>
+
+      <p><b>Parent:</b> {{ ride.parent }}</p>
+      <p><b>Phone:</b> {{ ride.phone }}</p>
+      <p><b>Society:</b> {{ ride.society }}</p>
+      <p><b>Area:</b> {{ ride.area }}</p>
+      <p><b>Seats Available:</b> {{ ride.seats }}</p>
+
+      <h4>Students Traveling:</h4>
+      <ul>
+        {% for student in ride.students %}
+          <li>{{ student.name }} (Section {{ student.section }})</li>
+        {% endfor %}
+      </ul>
+
+      <hr>
+
+      <!-- Add Student -->
+      <form method="POST" action="/add-student/{{ ride._id }}">
+        <label>Add Student Name</label>
+        <input type="text" name="student_name" required>
+
+        <label>Section</label>
+        <input type="text" name="section" required>
+
+        <button type="submit">Add Student</button>
+      </form>
+
+      <br>
+
+      <!-- Update -->
+      <a href="/update-ride/{{ ride._id }}">
+        <button>Update Ride</button>
+      </a>
+
+      <!-- Delete -->
+      <a href="/delete-ride/{{ ride._id }}">
+        <button class="danger">Delete Ride</button>
+      </a>
+
+    </div>
+    <br>
+  {% endfor %}
+
+</div>
+
+</body>
+</html>

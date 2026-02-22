@@ -1,0 +1,105 @@
+/* ===== Background Styling ===== */
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+
+    /* Gradient background */
+    background: linear-gradient(to bottom right, #dfe9f3, #ffffff);
+}
+
+/* Optional background image overlay */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: url("/static/bg-school.png") center/cover no-repeat;
+    opacity: 0.08; /* make it light */
+    z-index: -1;
+}
+
+/* ===== Main Container ===== */
+.container {
+    max-width: 650px;
+    margin: 40px auto;
+    background: white;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+}
+
+/* ===== Headings ===== */
+h1 {
+    text-align: center;
+    color: #2c3e50;
+}
+
+h3, h4 {
+    color: #34495e;
+}
+
+/* ===== Labels ===== */
+label {
+    font-weight: 600;
+    font-size: 14px;
+    color: #555;
+}
+
+/* ===== Inputs ===== */
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    margin-bottom: 14px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background: #fafafa;
+    transition: 0.2s;
+}
+
+input:focus, select:focus {
+    border-color: #3498db;
+    background: white;
+    outline: none;
+}
+
+/* ===== Buttons ===== */
+button {
+    background: linear-gradient(135deg, #3498db, #6dd5fa);
+    color: white;
+    padding: 11px;
+    border: none;
+    border-radius: 8px;
+    width: 100%;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+}
+
+/* ===== Cards (rides page) ===== */
+.card {
+    background: #f9fbfd;
+    padding: 14px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+    border-left: 5px solid #3498db;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+/* ===== Links ===== */
+a {
+    text-decoration: none;
+}
+
+/* ===== Divider ===== */
+hr {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 20px 0;
+}

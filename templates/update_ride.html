@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Update Ride</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container">
+
+  <h1> Update Ride</h1>
+
+  <form method="POST">
+
+    <label>Day</label>
+    <select name="day">
+      <option {% if ride.day=="Monday" %}selected{% endif %}>Monday</option>
+      <option {% if ride.day=="Tuesday" %}selected{% endif %}>Tuesday</option>
+      <option {% if ride.day=="Wednesday" %}selected{% endif %}>Wednesday</option>
+      <option {% if ride.day=="Thursday" %}selected{% endif %}>Thursday</option>
+      <option {% if ride.day=="Friday" %}selected{% endif %}>Friday</option>
+    </select>
+
+    <label>Date</label>
+    <input type="date" name="date" value="{{ ride.date }}">
+
+    <label>Seats</label>
+    <input type="number" name="seats" value="{{ ride.seats }}">
+
+    <label>Society</label>
+    <input type="text" name="society" value="{{ ride.society }}">
+
+    <label>Area</label>
+    <input type="text" name="area" value="{{ ride.area }}">
+
+    <button type="submit">Update Ride</button>
+  </form>
+
+  <br>
+  <a href="/rides"><button class="secondary">Back</button></a>
+
+</div>
+
+</body>
+</html>
