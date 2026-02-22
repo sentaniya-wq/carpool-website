@@ -16,7 +16,13 @@ client = MongoClient(
 )
 
 app = Flask(__name__)
-app.secret_key = "secret123"
+app.secret_key = os.environ.get("SECRET_KEY", "dev-secret")
+
+# ADD THIS
+app.config.update(
+    SESSION_COOKIE_SAMESITE="None",
+    SESSION_COOKIE_SECURE=True
+)
 
 # MongoDB connection
 db = client.carpool
