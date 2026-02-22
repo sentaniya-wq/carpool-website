@@ -22,6 +22,7 @@ app.secret_key = "secret123"
 db = client.carpool
 parents = db.parents
 rides = db.rides
+users = db.users
 
 # =========================
 # HOME
