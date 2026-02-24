@@ -31,6 +31,13 @@ rides = db.rides
 users = db.users
 
 # =========================
+# ABOUT
+# =========================
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+# =========================
 # HOME
 # =========================
 @app.route("/")
