@@ -9,57 +9,18 @@
 
 <div class="container">
   <div class="app-header">
-    🚗 SchoolPool
+  🚗 SchoolPool
   </div>
-  <h1>Carpool Dashboard</h1>
-
-  <!-- Flash messages -->
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      <div class="flash-messages">
-        {% for category, message in messages %}
-          <div class="flash {{ category }}">{{ message }}</div>
-        {% endfor %}
-      </div>
-    {% endif %}
-  {% endwith %}
+  <h1> Carpool Dashboard</h1>
 
   <p>Welcome <b>{{ name }}</b></p>
 
-  <hr>
-
-  <h3>Manage Your Students</h3>
-  {% if students %}
-    <ul>
-      {% for student in students %}
-        {% if student.name and student.section %}
-          <li>{{ student.name }} (Section {{ student.section }})</li>
-        {% endif %}
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>No students added yet.</p>
-  {% endif %}
-
-  <form method="POST">
-    {{ csrf_token() }}
-    <label>Student Name</label>
-    <input type="text" name="student_name" required>
-
-    <label>Section</label>
-    <input type="text" name="section" required>
-
-    <button type="submit">Add Student</button>
-  </form>
-
-  <hr>
-
   <h3>Add Carpool Slot</h3>
-  <form method="POST" action="{{ url_for('add_ride') }}">
-    {{ csrf_token() }}
+
+  <form method="POST" action="/add-ride">
 
     <label>Day</label>
-    <select name="day" required>
+    <select name="day">
       <option>Monday</option>
       <option>Tuesday</option>
       <option>Wednesday</option>
@@ -71,7 +32,7 @@
     <input type="date" name="date" required>
 
     <label>Seats Available</label>
-    <input type="number" name="seats" min="1" required>
+    <input type="number" name="seats" required>
 
     <label>Society Name</label>
     <input type="text" name="society" required>
@@ -80,37 +41,30 @@
     <input type="text" name="area" required>
 
     <hr>
-    <h4>Select Student for This Ride</h4>
-    {% if students %}
-      <select name="student_name" required>
-        {% for student in students %}
-          {% if student.name and student.section %}
-            <option value="{{ student.name }}">{{ student.name }} (Section {{ student.section }})</option>
-          {% endif %}
-        {% endfor %}
-      </select>
 
-      <input type="hidden" name="section" value="{{ students[0].section }}">
-    {% else %}
-      <label>Student Name</label>
-      <input type="text" name="student_name" required>
-      <label>Section</label>
-      <input type="text" name="section" required>
-    {% endif %}
+    <h4>Student Details</h4>
+
+    <label>Student Name</label>
+    <input type="text" name="student_name" required>
+
+    <label>Section</label>
+    <input type="text" name="section" required>
 
     <button type="submit">Add Ride</button>
   </form>
 
   <br>
-  <a href="{{ url_for('view_rides') }}"><button>View All Rides</button></a>
-  <a href="{{ url_for('logout') }}"><button class="secondary">Logout</button></a>
+  <a href="/rides"><button>View All Rides</button></a>
+  <a href="/logout"><button class="secondary">Logout</button></a>
+  
+
 </div>
 
 <div class="bottom-nav">
-  <a href="{{ url_for('dashboard') }}">🏠</a>
-  <a href="{{ url_for('view_rides') }}">🚗</a>
-  <a href="{{ url_for('my_rides') }}">📋</a>
-  <a href="{{ url_for('logout') }}">🚪</a>
+  <a href="/dashboard">🏠</a>
+  <a href="/rides">🚗</a>
+  <a href="/my-rides">📋</a>
+  <a href="/logout">🚪</a>
 </div>
 
 </body>

@@ -1,8 +1,6 @@
-from flask import Flask, render_template, request, redirect, session, url_for, flash
-from flask_wtf.csrf import CSRFProtect
+from flask import Flask, render_template, request, redirect, session, url_for
 from pymongo import MongoClient
 from bson.objectid import ObjectId
-from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import certifi
 
@@ -10,28 +8,29 @@ import certifi
 # MongoDB connection
 # =========================
 MONGO_URL = "mongodb+srv://carpool-db-user:Welcome1$@carpool-cluster.hacthov.mongodb.net/?appName=carpool-cluster"
-client = MongoClient(MONGO_URL, tls=True, tlsCAFile=certifi.where())
-db = client.carpool
-users = db.users
-rides = db.rides
-parents = db.parents
 
-ADMIN_PHONE = "999999999"
+client = MongoClient(
+    MONGO_URL,
+    tls=True,
+    tlsCAFile=certifi.where()
+)
 
-# =========================
-# Flask App
-# =========================
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "dev-secret")
 
-# CSRF Protection
-csrf = CSRFProtect(app)
-
-# Session config
+# ADD THIS
 app.config.update(
-    SESSION_COOKIE_SAMESITE="None" if os.environ.get("FLASK_ENV") == "production" else "Lax",
-    SESSION_COOKIE_SECURE=os.environ.get("FLASK_ENV") == "production"
+    SESSION_COOKIE_SAMESITE="None",
+    SESSION_COOKIE_SECURE=True
 )
+
+# MongoDB connection
+db = client.carpool
+parents = db.parents
+rides = db.rides
+users = db.users
+
+ADMIN_PHONE = "999999999"
 
 # =========================
 # ABOUT
@@ -45,7 +44,9 @@ def about():
 # =========================
 @app.route("/")
 def home():
-    return redirect(url_for('login') if "user" not in session else url_for('dashboard'))
+    if "user" in session:
+        return redirect("/dashboard")
+    return redirect("/login")
 
 # =========================
 # REGISTER
@@ -53,50 +54,38 @@ def home():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        name = request.form.get("name")
-        phone = request.form.get("phone")
-        password = request.form.get("password")
-
-        if not name or not phone or not password:
-            flash("All fields are required", "error")
-            return redirect(url_for("register"))
+        name = request.form["name"]
+        phone = request.form["phone"]
+        password = request.form["password"]
 
         if users.find_one({"phone": phone}):
-            flash("User already exists", "error")
-            return redirect(url_for("register"))
+            return "User already exists"
 
-        hashed_pw = generate_password_hash(password)
-        users.insert_one({"name": name, "phone": phone, "password": hashed_pw})
-        flash("Registration successful. Please login.", "success")
-        return redirect(url_for("login"))
+        users.insert_one({
+            "name": name,
+            "phone": phone,
+            "password": password
+        })
+        return redirect("/login")
 
     return render_template("register.html")
 
 # =========================
 # LOGIN
 # =========================
+@app.route("/", methods=["GET", "POST"])
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        phone = request.form.get("phone")
-        password = request.form.get("password")
+        phone = request.form["phone"]
+        password = request.form["password"]
 
-        if not phone or not password:
-            flash("Phone and password are required", "error")
-            return redirect(url_for("login"))
-
-        user = users.find_one({"phone": phone})
-        if user and check_password_hash(user["password"], password):
-            # Save only actual user info in session
+        user = users.find_one({"phone": phone, "password": password})
+        if user:
             session["user"] = user["name"]
             session["phone"] = phone
-            session["admin"] = phone == ADMIN_PHONE
-
-            flash(f"Welcome {user['name']}", "success")
-            return redirect(url_for("dashboard"))
-
-        flash("Invalid credentials", "error")
-        return redirect(url_for("login"))
+            session["admin"] = (phone == ADMIN_PHONE)
+            return redirect("/dashboard")
 
     return render_template("login.html")
 
@@ -106,40 +95,16 @@ def login():
 @app.route("/logout")
 def logout():
     session.clear()
-    flash("Logged out successfully", "info")
-    return redirect(url_for("login"))
+    return redirect("/login")
 
 # =========================
 # DASHBOARD
 # =========================
-@app.route("/dashboard", methods=["GET", "POST"])
+@app.route("/dashboard")
 def dashboard():
     if "user" not in session:
-        return redirect(url_for("login"))
-
-    # Handle adding student
-    if request.method == "POST":
-        student_name = request.form.get("student_name")
-        section = request.form.get("section")
-        if student_name and section:
-            rides.insert_one({
-                "day": "", "date": "", "parent": session["user"], "phone": session["phone"],
-                "society": "", "area": "", "total_seats": 0, "available_seats": 0,
-                "students": [{"name": student_name, "section": section, "parent_phone": session["phone"]}]
-            })
-            flash(f"Student {student_name} added", "success")
-            return redirect(url_for("dashboard"))
-
-    # Fetch all students for this parent (flattened)
-    students_cursor = rides.find({"phone": session["phone"]}, {"students": 1, "_id": 0})
-    students = []
-    for ride in students_cursor:
-        for s in ride.get("students", []):
-            # Avoid duplicates
-            if not any(d['name'] == s['name'] and d['section'] == s['section'] for d in students):
-                students.append({"name": s["name"], "section": s["section"]})
-
-    return render_template("dashboard.html", name=session["user"], students=students)
+        return redirect("/login")
+    return render_template("dashboard.html", name=session["user"])
 
 # =========================
 # ADD RIDE
@@ -147,32 +112,28 @@ def dashboard():
 @app.route("/add-ride", methods=["POST"])
 def add_ride():
     if "user" not in session:
-        return redirect(url_for("login"))
+        return redirect("/login")
 
-    try:
-        total_seats = int(request.form.get("seats", 0))
-    except ValueError:
-        flash("Invalid number of seats", "error")
-        return redirect(url_for("dashboard"))
+    total = int(request.form["seats"])
 
     ride = {
-        "day": request.form.get("day"),
-        "date": request.form.get("date"),
+        "day": request.form["day"],
+        "date": request.form["date"],
         "parent": session["user"],
         "phone": session["phone"],
-        "society": request.form.get("society"),
-        "area": request.form.get("area"),
-        "total_seats": total_seats,
-        "available_seats": total_seats,
+        "society": request.form["society"],
+        "area": request.form["area"],
+        "total_seats": total,
+        "available_seats": total,
         "students": [{
-            "name": request.form.get("student_name"),
-            "section": request.form.get("section"),
-            "parent_phone": session["phone"]
+            "name": request.form["student_name"],
+            "section": request.form["section"],
+            "phone": session["phone"]
         }]
     }
+
     rides.insert_one(ride)
-    flash("Ride added successfully", "success")
-    return redirect(url_for("view_rides"))
+    return redirect("/rides")
 
 # =========================
 # VIEW RIDES
@@ -180,7 +141,8 @@ def add_ride():
 @app.route("/rides")
 def view_rides():
     if "user" not in session:
-        return redirect(url_for("login"))
+        return redirect("/login")
+
     all_rides = list(rides.find().sort("date", 1))
     return render_template("rides.html", rides=all_rides, admin=session.get("admin"))
 
@@ -190,22 +152,14 @@ def view_rides():
 @app.route("/my-rides")
 def my_rides():
     if "phone" not in session:
-        return redirect(url_for("login"))
+        return redirect("/login")
 
     phone = session["phone"]
-    student = session.get("student")
 
     created = list(rides.find({"phone": phone}))
-    joined = []
+    joined = list(rides.find({"students.phone": phone}))
 
-    if student:
-        for ride in rides.find({"students.parent_phone": phone}):
-            for s in ride.get("students", []):
-                if s.get("parent_phone") == phone and s.get("name", "").lower() == student.lower():
-                    joined.append(ride)
-                    break
-
-    return render_template("my-rides.html", created=created, joined=joined, selected_student=student)
+    return render_template("my-rides.html", created=created, joined=joined)
 
 # =========================
 # ADD STUDENT TO EXISTING RIDE
@@ -213,25 +167,27 @@ def my_rides():
 @app.route("/add-student/<ride_id>", methods=["POST"])
 def add_student(ride_id):
     if "phone" not in session:
-        return redirect(url_for("login"))
+        return redirect("/login")
 
     ride = rides.find_one({"_id": ObjectId(ride_id)})
-    if not ride:
-        flash("Ride not found", "error")
-        return redirect(url_for("view_rides"))
 
     if ride["available_seats"] <= 0:
-        flash("Ride is full", "error")
-        return redirect(url_for("view_rides"))
+        return "Ride is full"
 
     student = {
-        "name": request.form.get("student_name"),
-        "section": request.form.get("section"),
-        "parent_phone": session["phone"]
+        "name": request.form["student_name"],
+        "section": request.form["section"],
+        "phone": session["phone"]
     }
-    rides.update_one({"_id": ObjectId(ride_id)}, {"$push": {"students": student}, "$inc": {"available_seats": -1}})
-    flash(f"Student {student['name']} added to ride", "success")
-    return redirect(url_for("view_rides"))
+
+    rides.update_one(
+        {"_id": ObjectId(ride_id)},
+        {
+            "$push": {"students": student},
+            "$inc": {"available_seats": -1}
+        }
+    )
+    return redirect("/rides")
 
 # =========================
 # DELETE RIDE
@@ -239,33 +195,26 @@ def add_student(ride_id):
 @app.route("/delete-ride/<ride_id>", methods=["POST"])
 def delete_ride(ride_id):
     if "phone" not in session:
-        return redirect(url_for("login"))
+        return redirect("/login")
 
     ride = rides.find_one({"_id": ObjectId(ride_id)})
-    if not ride:
-        flash("Ride not found", "error")
-        return redirect(url_for("view_rides"))
 
     if ride["phone"] != session["phone"]:
-        flash("Not authorized", "error")
-        return redirect(url_for("view_rides"))
+        return "Not authorized"
 
     rides.delete_one({"_id": ObjectId(ride_id)})
-    flash("Ride deleted successfully", "info")
-    return redirect(url_for("view_rides"))
+    return redirect("/rides")
 
 # =========================
-# DELETE ALL RIDES (ADMIN)
+# DELETE ALL (ADMIN ONLY)
 # =========================
-@app.route("/delete-all", methods=["POST"])
+@app.route("/delete-all")
 def delete_all():
     if not session.get("admin"):
-        flash("Admins only", "error")
-        return redirect(url_for("view_rides"))
+        return "Admins only"
 
     rides.delete_many({})
-    flash("All rides deleted", "info")
-    return redirect(url_for("view_rides"))
+    return redirect("/rides")
 
 # =========================
 # UPDATE RIDE
@@ -273,42 +222,24 @@ def delete_all():
 @app.route("/update-ride/<ride_id>", methods=["GET", "POST"])
 def update_ride(ride_id):
     if "phone" not in session:
-        return redirect(url_for("login"))
+        return redirect("/login")
 
     ride = rides.find_one({"_id": ObjectId(ride_id)})
-    if not ride:
-        flash("Ride not found", "error")
-        return redirect(url_for("view_rides"))
 
     if ride["phone"] != session["phone"]:
-        flash("Not authorized", "error")
-        return redirect(url_for("view_rides"))
+        return "Not authorized"
 
     if request.method == "POST":
-        # Get new total seats from form
-        try:
-            new_total = int(request.form.get("seats", ride.get("total_seats", 0)))
-        except ValueError:
-            flash("Invalid number of seats", "error")
-            return redirect(url_for("update_ride", ride_id=ride_id))
-
-        # Calculate how many seats are currently taken
-        seats_taken = ride.get("total_seats", 0) - ride.get("available_seats", 0)
-        new_available = max(new_total - seats_taken, 0)
-
         rides.update_one(
             {"_id": ObjectId(ride_id)},
             {"$set": {
-                "day": request.form.get("day"),
-                "date": request.form.get("date"),
-                "society": request.form.get("society"),
-                "area": request.form.get("area"),
-                "total_seats": new_total,
-                "available_seats": new_available
+                "day": request.form["day"],
+                "date": request.form["date"],
+                "society": request.form["society"],
+                "area": request.form["area"]
             }}
         )
-        flash("Ride updated successfully", "success")
-        return redirect(url_for("view_rides"))
+        return redirect("/rides")
 
     return render_template("update-ride.html", ride=ride)
 

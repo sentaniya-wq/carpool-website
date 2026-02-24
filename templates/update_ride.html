@@ -10,26 +10,14 @@
 <div class="container">
 
   <div class="app-header">
-    🚗 SchoolPool
+  🚗 SchoolPool
   </div>
-  <h1>Update Ride</h1>
-
-  <!-- Flash messages -->
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      <div class="flash-messages">
-        {% for category, message in messages %}
-          <div class="flash {{ category }}">{{ message }}</div>
-        {% endfor %}
-      </div>
-    {% endif %}
-  {% endwith %}
+  <h1> Update Ride</h1>
 
   <form method="POST">
-    {{ csrf_token() }}
 
     <label>Day</label>
-    <select name="day" required>
+    <select name="day">
       <option {% if ride.day=="Monday" %}selected{% endif %}>Monday</option>
       <option {% if ride.day=="Tuesday" %}selected{% endif %}>Tuesday</option>
       <option {% if ride.day=="Wednesday" %}selected{% endif %}>Wednesday</option>
@@ -38,31 +26,30 @@
     </select>
 
     <label>Date</label>
-    <input type="date" name="date" value="{{ ride.date }}" required>
+    <input type="date" name="date" value="{{ ride.date }}">
 
-    <label>Total Seats</label>
-    <input type="number" name="seats" value="{{ ride.total_seats }}" min="{{ ride.students|length }}" required>
-    <small>Seats currently taken: {{ ride.students|length }}</small>
+    <label>Seats</label>
+    <input type="number" name="seats" value="{{ ride.seats }}">
 
     <label>Society</label>
-    <input type="text" name="society" value="{{ ride.society }}" required>
+    <input type="text" name="society" value="{{ ride.society }}">
 
     <label>Area</label>
-    <input type="text" name="area" value="{{ ride.area }}" required>
+    <input type="text" name="area" value="{{ ride.area }}">
 
     <button type="submit">Update Ride</button>
   </form>
 
   <br>
-  <a href="{{ url_for('view_rides') }}"><button class="secondary">Back</button></a>
+  <a href="/rides"><button class="secondary">Back</button></a>
 
 </div>
 
 <div class="bottom-nav">
-  <a href="{{ url_for('dashboard') }}">🏠</a>
-  <a href="{{ url_for('view_rides') }}">🚗</a>
-  <a href="{{ url_for('my_rides') }}">📋</a>
-  <a href="{{ url_for('logout') }}">🚪</a>
+  <a href="/dashboard">🏠</a>
+  <a href="/rides">🚗</a>
+  <a href="/my-rides">📋</a>
+  <a href="/logout">🚪</a>
 </div>
 
 </body>

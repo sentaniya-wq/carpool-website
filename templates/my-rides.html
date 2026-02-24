@@ -9,7 +9,7 @@
 
 <div class="container">
   <div class="app-header">
-    🚗 SchoolPool
+  🚗 SchoolPool
   </div>
   <h1>My Rides</h1>
 
@@ -22,14 +22,7 @@
     <div class="card">
       <b>{{ ride.day }} - {{ ride.date }}</b><br>
       Area: {{ ride.area }}<br>
-      Seats left: 
-      {% set available = ride.available_seats or 0 %}
-      {% set total = ride.total_seats or 0 %}
-      {% if available == 0 %}
-        <span class="seats-low">Full</span>
-      {% else %}
-        <span class="seats-ok">{{ available }} left{% if total > 0 %} / {{ total }}{% endif %}</span>
-      {% endif %}
+      Seats left: {{ ride.available_seats }}
     </div>
   {% else %}
     <p>No rides created yet.</p>
@@ -42,20 +35,11 @@
     <div class="card">
       <b>{{ ride.day }} - {{ ride.date }}</b><br>
       Parent: {{ ride.parent }}<br>
-      Area: {{ ride.area }}<br>
-      Seats left: 
-      {% set available = ride.available_seats or 0 %}
-      {% set total = ride.total_seats or 0 %}
-      {% if available == 0 %}
-        <span class="seats-low">Full</span>
-      {% else %}
-        <span class="seats-ok">{{ available }} left{% if total > 0 %} / {{ total }}{% endif %}</span>
-      {% endif %}
+      Area: {{ ride.area }}
     </div>
   {% else %}
     <p>No rides joined yet.</p>
   {% endfor %}
-
 </div>
 
 <div class="bottom-nav">

@@ -9,7 +9,7 @@
 
 <div class="container">
   <div class="app-header">
-    🚗 SchoolPool
+  🚗 SchoolPool
   </div>
   <h1> Available Carpool Rides</h1>
 
@@ -17,61 +17,54 @@
   <a href="/logout"><button class="secondary">Logout</button></a>
 
   {% if admin %}
-    <form method="POST" action="/delete-all" style="display:inline;">
-      {{ csrf_token() }}
-      <button class="danger" type="submit">Delete All Rides (Admin)</button>
-    </form>
+    <a href="/delete-all">
+      <button class="danger">Delete All Rides (Admin)</button>
+    </a>
   {% endif %}
 
   <hr>
 
   {% for ride in rides %}
-    <div class="card">
+    <div class="ride-card">
 
       <h3>{{ ride.day }} - {{ ride.date }}</h3>
 
-      {% if ride.phone == session.get("phone") %}
+      {% if ride.phone == session.phone %}
         <span class="badge owner">⭐ Your Ride</span>
       {% else %}
         {% set joined = false %}
-        {% if session.get("student") %}
           {% for student in ride.students %}
-            {% if student.parent_phone == session.get("phone") and student.name == session.get("student") %}
+            {% if student.phone == session.phone %}
               {% set joined = true %}
             {% endif %}
           {% endfor %}
-        {% endif %}
         {% if joined %}
           <span class="badge joined">🤝 Joined Ride</span>
         {% endif %}
       {% endif %}
-
       <p><b>Parent:</b> {{ ride.parent }}</p>
       <p><b>Phone:</b> {{ ride.phone }}</p>
       <p><b>Society:</b> {{ ride.society }}</p>
       <p><b>Area:</b> {{ ride.area }}</p>
-
       <p><b>Seats:</b>
-        {% set available = ride.available_seats or 0 %}
-        {% set total = ride.total_seats or 0 %}
-        {% if available == 0 %}
+        {% if ride.available_seats == 0 %}
           <span class="seats-low">Full</span>
         {% else %}
-          <span class="seats-ok">{{ available }} left{% if total > 0 %} / {{ total }}{% endif %}</span>
+          <span class="seats-ok">{{ ride.available_seats }} left</span>
         {% endif %}
       </p>
 
       <h4>Students Traveling:</h4>
       <ul>
         {% for student in ride.students %}
-          {% if student.name and student.section %}
-            <li>{{ student.name }} (Section {{ student.section }})</li>
-          {% endif %}
+          <li>{{ student.name }} (Section {{ student.section }})</li>
         {% endfor %}
       </ul>
 
+      <hr>
+
+      <!-- Add Student -->
       <form method="POST" action="/add-student/{{ ride._id }}">
-        {{ csrf_token() }}
         <label>Add Student Name</label>
         <input type="text" name="student_name" required>
 
@@ -81,13 +74,16 @@
         <button type="submit">Add Student</button>
       </form>
 
+      <br>
+
+      <!-- Update -->
       <a href="/update-ride/{{ ride._id }}">
         <button>Update Ride</button>
       </a>
 
+      <!-- Delete -->
       <form method="POST" action="/delete-ride/{{ ride._id }}">
-        {{ csrf_token() }}
-        <button class="danger" type="submit">Delete Ride</button>
+        <button class="danger">Delete Ride</button>
       </form>
 
     </div>
