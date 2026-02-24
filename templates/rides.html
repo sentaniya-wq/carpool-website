@@ -32,12 +32,15 @@
       {% if ride.phone == session.phone %}
         <span class="badge owner">⭐ Your Ride</span>
       {% else %}
-        {% for student in ride.students %}
-          {% if student.phone == session.phone %}
-            <span class="badge joined">🤝 Joined Ride</span>
-          {% break %}
-          {% endif %}
-        {% endfor %}
+        {% set joined = false %}
+          {% for student in ride.students %}
+            {% if student.phone == session.phone %}
+              {% set joined = true %}
+            {% endif %}
+          {% endfor %}
+        {% if joined %}
+          <span class="badge joined">🤝 Joined Ride</span>
+        {% endif %}
       {% endif %}
       <p><b>Parent:</b> {{ ride.parent }}</p>
       <p><b>Phone:</b> {{ ride.phone }}</p>
