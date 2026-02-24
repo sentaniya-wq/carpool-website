@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Rides</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<div class="container">
+  <div class="app-header">
+  🚗 SchoolPool
+  </div>
+  <h1>My Rides</h1>
+
+  <a href="/dashboard"><button class="secondary">Back</button></a>
+
+  <hr>
+
+  <h3>Rides I Created</h3>
+  {% for ride in created %}
+    <div class="card">
+      <b>{{ ride.day }} - {{ ride.date }}</b><br>
+      Area: {{ ride.area }}<br>
+      Seats left: {{ ride.available_seats }}
+    </div>
+  {% else %}
+    <p>No rides created yet.</p>
+  {% endfor %}
+
+  <hr>
+
+  <h3>Rides I Joined</h3>
+  {% for ride in joined %}
+    <div class="card">
+      <b>{{ ride.day }} - {{ ride.date }}</b><br>
+      Parent: {{ ride.parent }}<br>
+      Area: {{ ride.area }}
+    </div>
+  {% else %}
+    <p>No rides joined yet.</p>
+  {% endfor %}
+</div>
+
+<div class="bottom-nav">
+  <a href="/dashboard">🏠</a>
+  <a href="/rides">🚗</a>
+  <a href="/my-rides">📋</a>
+  <a href="/logout">🚪</a>
+</div>
+
+</body>
+</html>

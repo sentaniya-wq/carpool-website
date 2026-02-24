@@ -3,10 +3,14 @@
 <head>
   <title>Dashboard</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
 
 <div class="container">
+  <div class="app-header">
+  🚗 SchoolPool
+  </div>
   <h1> Carpool Dashboard</h1>
 
   <p>Welcome <b>{{ name }}</b></p>
@@ -52,7 +56,15 @@
   <br>
   <a href="/rides"><button>View All Rides</button></a>
   <a href="/logout"><button class="secondary">Logout</button></a>
+  
 
+</div>
+
+<div class="bottom-nav">
+  <a href="/dashboard">🏠</a>
+  <a href="/rides">🚗</a>
+  <a href="/my-rides">📋</a>
+  <a href="/logout">🚪</a>
 </div>
 
 </body>

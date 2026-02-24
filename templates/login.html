@@ -3,10 +3,14 @@
 <head>
   <title>Login</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
 
 <div class="container">
+  <div class="app-header">
+  🚗 SchoolPool
+  </div>
   <h1> Carpool Login</h1>
 
   <form method="POST">
@@ -21,6 +25,13 @@
 
   <p>New parent?</p>
   <a href="/register"><button class="secondary">Register Here</button></a>
+</div>
+
+<div class="bottom-nav">
+  <a href="/dashboard">🏠</a>
+  <a href="/rides">🚗</a>
+  <a href="/my-rides">📋</a>
+  <a href="/logout">🚪</a>
 </div>
 
 </body>

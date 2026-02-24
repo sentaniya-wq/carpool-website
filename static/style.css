@@ -20,7 +20,7 @@ body::before {
 
 /* ===== Main Container ===== */
 .container {
-    max-width: 650px;
+    max-width: 450px;
     margin: 40px auto;
     background: white;
     padding: 25px;
@@ -65,16 +65,9 @@ input:focus, select:focus {
 
 /* ===== Buttons ===== */
 button {
-    background: linear-gradient(135deg, #3498db, #6dd5fa);
-    color: white;
-    padding: 11px;
-    border: none;
-    border-radius: 8px;
-    width: 100%;
-    font-size: 15px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.25s;
+    border-radius: 25px;
+    padding: 10px;
+    font-size: 14px;
 }
 
 button:hover {
@@ -82,14 +75,68 @@ button:hover {
     box-shadow: 0 6px 14px rgba(0,0,0,0.2);
 }
 
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    display: flex;
+    justify-content: space-around;
+    padding: 12px 0;
+    box-shadow: 0 -4px 12px rgba(0,0,0,0.08);
+}
+
+.bottom-nav a {
+    text-decoration: none;
+    font-size: 20px;
+}
+
 /* ===== Cards (rides page) ===== */
 .card {
-    background: #f9fbfd;
-    padding: 14px;
-    margin-bottom: 12px;
-    border-radius: 10px;
-    border-left: 5px solid #3498db;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    background: #ffffff;
+    padding: 16px;
+    margin-bottom: 15px;
+    border-radius: 16px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+}
+
+/* ===== Bagde (rides page) ===== */
+.badge {
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: bold;
+    display: inline-block;
+    margin-bottom: 6px;
+}
+
+.badge.owner {
+    background: #ffeaa7;
+    color: #2d3436;
+}
+
+.badge.joined {
+    background: #d4f8e8;
+    color: #0b6e4f;
+}
+
+.app-header {
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+.seats-low {
+    color: red;
+    font-weight: bold;
+}
+
+.seats-ok {
+    color: green;
+    font-weight: bold;
 }
 
 /* ===== Links ===== */

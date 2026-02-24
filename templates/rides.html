@@ -3,10 +3,14 @@
 <head>
   <title>All Rides</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
 
 <div class="container">
+  <div class="app-header">
+  🚗 SchoolPool
+  </div>
   <h1> Available Carpool Rides</h1>
 
   <a href="/dashboard"><button class="secondary">Back to Dashboard</button></a>
@@ -25,11 +29,27 @@
 
       <h3>{{ ride.day }} - {{ ride.date }}</h3>
 
+      {% if ride.phone == session.phone %}
+        <span class="badge owner">⭐ Your Ride</span>
+      {% else %}
+        {% for student in ride.students %}
+          {% if student.phone == session.phone %}
+            <span class="badge joined">🤝 Joined Ride</span>
+          {% break %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
       <p><b>Parent:</b> {{ ride.parent }}</p>
       <p><b>Phone:</b> {{ ride.phone }}</p>
       <p><b>Society:</b> {{ ride.society }}</p>
       <p><b>Area:</b> {{ ride.area }}</p>
-      <p><b>Seats Available:</b> {{ ride.seats }}</p>
+      <p><b>Seats:</b>
+        {% if ride.available_seats == 0 %}
+          <span class="seats-low">Full</span>
+        {% else %}
+          <span class="seats-ok">{{ ride.available_seats }} left</span>
+        {% endif %}
+      </p>
 
       <h4>Students Traveling:</h4>
       <ul>
@@ -59,14 +79,21 @@
       </a>
 
       <!-- Delete -->
-      <a href="/delete-ride/{{ ride._id }}">
+      <form method="POST" action="/delete-ride/{{ ride._id }}">
         <button class="danger">Delete Ride</button>
-      </a>
+      </form>
 
     </div>
     <br>
   {% endfor %}
 
+</div>
+
+<div class="bottom-nav">
+  <a href="/dashboard">🏠</a>
+  <a href="/rides">🚗</a>
+  <a href="/my-rides">📋</a>
+  <a href="/logout">🚪</a>
 </div>
 
 </body>
