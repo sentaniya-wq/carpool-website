@@ -40,8 +40,9 @@
     <label>Date</label>
     <input type="date" name="date" value="{{ ride.date }}" required>
 
-    <label>Seats Available</label>
-    <input type="number" name="seats" value="{{ ride.total_seats }}" min="1" required>
+    <label>Total Seats</label>
+    <input type="number" name="seats" value="{{ ride.total_seats }}" min="{{ ride.students|length }}" required>
+    <small>Seats currently taken: {{ ride.students|length }}</small>
 
     <label>Society</label>
     <input type="text" name="society" value="{{ ride.society }}" required>

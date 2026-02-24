@@ -33,20 +33,6 @@
     <label>Password</label>
     <input type="password" name="password" required>
 
-    {% if session.get("students") %}
-      <label>Select Student</label>
-      <select name="student" required>
-        {% for student in session.get("students") %}
-          <option value="{{ student.name }}" {% if student.name == session.get("student") %}selected{% endif %}>
-            {{ student.name }} (Section {{ student.section }})
-          </option>
-        {% endfor %}
-      </select>
-    {% else %}
-      <label>Student Name</label>
-      <input type="text" name="student" required>
-    {% endif %}
-
     <button type="submit">Login</button>
   </form>
 

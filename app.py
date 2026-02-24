@@ -80,7 +80,6 @@ def login():
     if request.method == "POST":
         phone = request.form.get("phone")
         password = request.form.get("password")
-        student_name = request.form.get("student")
 
         if not phone or not password:
             flash("Phone and password are required", "error")
@@ -88,13 +87,10 @@ def login():
 
         user = users.find_one({"phone": phone})
         if user and check_password_hash(user["password"], password):
+            # Save only actual user info in session
             session["user"] = user["name"]
             session["phone"] = phone
-            session["student"] = student_name
             session["admin"] = phone == ADMIN_PHONE
-
-            # ❌ Removed storing MongoDB documents directly in session
-            # session["students"] = list(rides.find({"phone": phone}, {"students": 1}))
 
             flash(f"Welcome {user['name']}", "success")
             return redirect(url_for("dashboard"))
@@ -289,13 +285,26 @@ def update_ride(ride_id):
         return redirect(url_for("view_rides"))
 
     if request.method == "POST":
+        # Get new total seats from form
+        try:
+            new_total = int(request.form.get("seats", ride.get("total_seats", 0)))
+        except ValueError:
+            flash("Invalid number of seats", "error")
+            return redirect(url_for("update_ride", ride_id=ride_id))
+
+        # Calculate how many seats are currently taken
+        seats_taken = ride.get("total_seats", 0) - ride.get("available_seats", 0)
+        new_available = max(new_total - seats_taken, 0)
+
         rides.update_one(
             {"_id": ObjectId(ride_id)},
             {"$set": {
                 "day": request.form.get("day"),
                 "date": request.form.get("date"),
                 "society": request.form.get("society"),
-                "area": request.form.get("area")
+                "area": request.form.get("area"),
+                "total_seats": new_total,
+                "available_seats": new_available
             }}
         )
         flash("Ride updated successfully", "success")
