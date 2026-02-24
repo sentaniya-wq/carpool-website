@@ -52,17 +52,21 @@
       <p><b>Area:</b> {{ ride.area }}</p>
 
       <p><b>Seats:</b>
-        {% if ride.available_seats == 0 %}
+        {% set available = ride.available_seats or 0 %}
+        {% set total = ride.total_seats or 0 %}
+        {% if available == 0 %}
           <span class="seats-low">Full</span>
         {% else %}
-          <span class="seats-ok">{{ ride.available_seats }} left</span>
+          <span class="seats-ok">{{ available }} left{% if total > 0 %} / {{ total }}{% endif %}</span>
         {% endif %}
       </p>
 
       <h4>Students Traveling:</h4>
       <ul>
         {% for student in ride.students %}
-          <li>{{ student.name }} (Section {{ student.section }})</li>
+          {% if student.name and student.section %}
+            <li>{{ student.name }} (Section {{ student.section }})</li>
+          {% endif %}
         {% endfor %}
       </ul>
 

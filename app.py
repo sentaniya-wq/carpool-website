@@ -93,8 +93,9 @@ def login():
             session["student"] = student_name
             session["admin"] = phone == ADMIN_PHONE
 
-            # Store students of this parent for dropdown
-            session["students"] = list(rides.find({"phone": phone}, {"students": 1}))
+            # ❌ Removed storing MongoDB documents directly in session
+            # session["students"] = list(rides.find({"phone": phone}, {"students": 1}))
+
             flash(f"Welcome {user['name']}", "success")
             return redirect(url_for("dashboard"))
 
@@ -133,13 +134,14 @@ def dashboard():
             flash(f"Student {student_name} added", "success")
             return redirect(url_for("dashboard"))
 
-    # Fetch students
-    students_cursor = rides.find({"phone": session["phone"]}, {"students": 1})
+    # Fetch all students for this parent (flattened)
+    students_cursor = rides.find({"phone": session["phone"]}, {"students": 1, "_id": 0})
     students = []
     for ride in students_cursor:
         for s in ride.get("students", []):
-            if s not in students:
-                students.append(s)
+            # Avoid duplicates
+            if not any(d['name'] == s['name'] and d['section'] == s['section'] for d in students):
+                students.append({"name": s["name"], "section": s["section"]})
 
     return render_template("dashboard.html", name=session["user"], students=students)
 

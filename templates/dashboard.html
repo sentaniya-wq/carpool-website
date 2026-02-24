@@ -32,7 +32,9 @@
   {% if students %}
     <ul>
       {% for student in students %}
-        <li>{{ student.name }} (Section {{ student.section }})</li>
+        {% if student.name and student.section %}
+          <li>{{ student.name }} (Section {{ student.section }})</li>
+        {% endif %}
       {% endfor %}
     </ul>
   {% else %}
@@ -82,7 +84,9 @@
     {% if students %}
       <select name="student_name" required>
         {% for student in students %}
-          <option value="{{ student.name }}">{{ student.name }} (Section {{ student.section }})</option>
+          {% if student.name and student.section %}
+            <option value="{{ student.name }}">{{ student.name }} (Section {{ student.section }})</option>
+          {% endif %}
         {% endfor %}
       </select>
 
