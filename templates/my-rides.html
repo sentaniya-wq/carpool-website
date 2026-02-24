@@ -9,44 +9,71 @@
 
 <div class="container">
   <div class="app-header">
-  🚗 SchoolPool
+    🚗 SchoolPool
   </div>
   <h1>My Rides</h1>
 
-  <a href="/dashboard"><button class="secondary">Back</button></a>
+  <!-- Flash messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-messages">
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
 
+  <a href="{{ url_for('dashboard') }}"><button class="secondary">Back</button></a>
   <hr>
 
   <h3>Rides I Created</h3>
-  {% for ride in created %}
-    <div class="card">
-      <b>{{ ride.day }} - {{ ride.date }}</b><br>
-      Area: {{ ride.area }}<br>
-      Seats left: {{ ride.available_seats }}
-    </div>
+  {% if created %}
+    {% for ride in created %}
+      <div class="card">
+        <b>{{ ride.day }} - {{ ride.date }}</b><br>
+        Area: {{ ride.area }}<br>
+        Seats left: {{ ride.available_seats }} / {{ ride.total_seats }}<br>
+        Students: 
+        <ul>
+          {% for s in ride.students %}
+            <li>{{ s.name }} (Section {{ s.section }})</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endfor %}
   {% else %}
     <p>No rides created yet.</p>
-  {% endfor %}
+  {% endif %}
 
   <hr>
-
   <h3>Rides I Joined</h3>
-  {% for ride in joined %}
-    <div class="card">
-      <b>{{ ride.day }} - {{ ride.date }}</b><br>
-      Parent: {{ ride.parent }}<br>
-      Area: {{ ride.area }}
-    </div>
+  {% if joined %}
+    {% for ride in joined %}
+      <div class="card">
+        <b>{{ ride.day }} - {{ ride.date }}</b><br>
+        Parent: {{ ride.parent }}<br>
+        Area: {{ ride.area }}<br>
+        Seats left: {{ ride.available_seats }} / {{ ride.total_seats }}<br>
+        Students: 
+        <ul>
+          {% for s in ride.students %}
+            <li>{{ s.name }} (Section {{ s.section }})</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endfor %}
   {% else %}
     <p>No rides joined yet.</p>
-  {% endfor %}
+  {% endif %}
+
 </div>
 
 <div class="bottom-nav">
-  <a href="/dashboard">🏠</a>
-  <a href="/rides">🚗</a>
-  <a href="/my-rides">📋</a>
-  <a href="/logout">🚪</a>
+  <a href="{{ url_for('dashboard') }}">🏠</a>
+  <a href="{{ url_for('view_rides') }}">🚗</a>
+  <a href="{{ url_for('my_rides') }}">📋</a>
+  <a href="{{ url_for('logout') }}">🚪</a>
 </div>
 
 </body>

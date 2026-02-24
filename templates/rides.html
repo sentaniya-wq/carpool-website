@@ -9,43 +9,57 @@
 
 <div class="container">
   <div class="app-header">
-  🚗 SchoolPool
+    🚗 SchoolPool
   </div>
-  <h1> Available Carpool Rides</h1>
+  <h1>Available Carpool Rides</h1>
 
-  <a href="/dashboard"><button class="secondary">Back to Dashboard</button></a>
-  <a href="/logout"><button class="secondary">Logout</button></a>
+  <!-- Flash messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-messages">
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <a href="{{ url_for('dashboard') }}"><button class="secondary">Back to Dashboard</button></a>
 
   {% if admin %}
-    <a href="/delete-all">
+    <form method="POST" action="{{ url_for('delete_all') }}" style="display:inline;">
+      {{ csrf_token() }}
       <button class="danger">Delete All Rides (Admin)</button>
-    </a>
+    </form>
   {% endif %}
 
   <hr>
 
   {% for ride in rides %}
     <div class="ride-card">
-
       <h3>{{ ride.day }} - {{ ride.date }}</h3>
 
-      {% if ride.phone == session.phone %}
+      {% if ride.phone == session.get("phone") %}
         <span class="badge owner">⭐ Your Ride</span>
       {% else %}
         {% set joined = false %}
+        {% if session.get("student") %}
           {% for student in ride.students %}
-            {% if student.phone == session.phone %}
+            {% if student.parent_phone == session.get("phone") and student.name == session.get("student") %}
               {% set joined = true %}
             {% endif %}
           {% endfor %}
+        {% endif %}
         {% if joined %}
           <span class="badge joined">🤝 Joined Ride</span>
         {% endif %}
       {% endif %}
+
       <p><b>Parent:</b> {{ ride.parent }}</p>
       <p><b>Phone:</b> {{ ride.phone }}</p>
       <p><b>Society:</b> {{ ride.society }}</p>
       <p><b>Area:</b> {{ ride.area }}</p>
+
       <p><b>Seats:</b>
         {% if ride.available_seats == 0 %}
           <span class="seats-low">Full</span>
@@ -61,42 +75,42 @@
         {% endfor %}
       </ul>
 
-      <hr>
+      {% if ride.available_seats > 0 and ride.phone != session.get("phone") %}
+        <form method="POST" action="{{ url_for('add_student', ride_id=ride._id) }}">
+          {{ csrf_token() }}
+          <label>Add Student Name</label>
+          <input type="text" name="student_name" required>
 
-      <!-- Add Student -->
-      <form method="POST" action="/add-student/{{ ride._id }}">
-        <label>Add Student Name</label>
-        <input type="text" name="student_name" required>
+          <label>Section</label>
+          <input type="text" name="section" required>
 
-        <label>Section</label>
-        <input type="text" name="section" required>
+          <button type="submit">Add Student</button>
+        </form>
+      {% endif %}
 
-        <button type="submit">Add Student</button>
-      </form>
+      {% if ride.phone == session.get("phone") %}
+        <a href="{{ url_for('update_ride', ride_id=ride._id) }}">
+          <button>Update Ride</button>
+        </a>
 
-      <br>
-
-      <!-- Update -->
-      <a href="/update-ride/{{ ride._id }}">
-        <button>Update Ride</button>
-      </a>
-
-      <!-- Delete -->
-      <form method="POST" action="/delete-ride/{{ ride._id }}">
-        <button class="danger">Delete Ride</button>
-      </form>
-
+        <form method="POST" action="{{ url_for('delete_ride', ride_id=ride._id) }}" style="display:inline;">
+          {{ csrf_token() }}
+          <button class="danger">Delete Ride</button>
+        </form>
+      {% endif %}
     </div>
     <br>
+  {% else %}
+    <p>No rides available yet.</p>
   {% endfor %}
 
 </div>
 
 <div class="bottom-nav">
-  <a href="/dashboard">🏠</a>
-  <a href="/rides">🚗</a>
-  <a href="/my-rides">📋</a>
-  <a href="/logout">🚪</a>
+  <a href="{{ url_for('dashboard') }}">🏠</a>
+  <a href="{{ url_for('view_rides') }}">🚗</a>
+  <a href="{{ url_for('my_rides') }}">📋</a>
+  <a href="{{ url_for('logout') }}">🚪</a>
 </div>
 
 </body>
