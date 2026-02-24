@@ -13,67 +13,52 @@
   </div>
   <h1>My Rides</h1>
 
-  <!-- Flash messages -->
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      <div class="flash-messages">
-        {% for category, message in messages %}
-          <div class="flash {{ category }}">{{ message }}</div>
-        {% endfor %}
-      </div>
-    {% endif %}
-  {% endwith %}
+  <a href="/dashboard"><button class="secondary">Back</button></a>
 
-  <a href="{{ url_for('dashboard') }}"><button class="secondary">Back</button></a>
   <hr>
 
   <h3>Rides I Created</h3>
-  {% if created %}
-    {% for ride in created %}
-      <div class="card">
-        <b>{{ ride.day }} - {{ ride.date }}</b><br>
-        Area: {{ ride.area }}<br>
-        Seats left: {{ ride.available_seats }} / {{ ride.total_seats }}<br>
-        Students: 
-        <ul>
-          {% for s in ride.students %}
-            <li>{{ s.name }} (Section {{ s.section }})</li>
-          {% endfor %}
-        </ul>
-      </div>
-    {% endfor %}
+  {% for ride in created %}
+    <div class="card">
+      <b>{{ ride.day }} - {{ ride.date }}</b><br>
+      Area: {{ ride.area }}<br>
+      Seats left: 
+      {% if ride.available_seats == 0 %}
+        <span class="seats-low">Full</span>
+      {% else %}
+        <span class="seats-ok">{{ ride.available_seats }}</span>
+      {% endif %}
+    </div>
   {% else %}
     <p>No rides created yet.</p>
-  {% endif %}
+  {% endfor %}
 
   <hr>
+
   <h3>Rides I Joined</h3>
-  {% if joined %}
-    {% for ride in joined %}
-      <div class="card">
-        <b>{{ ride.day }} - {{ ride.date }}</b><br>
-        Parent: {{ ride.parent }}<br>
-        Area: {{ ride.area }}<br>
-        Seats left: {{ ride.available_seats }} / {{ ride.total_seats }}<br>
-        Students: 
-        <ul>
-          {% for s in ride.students %}
-            <li>{{ s.name }} (Section {{ s.section }})</li>
-          {% endfor %}
-        </ul>
-      </div>
-    {% endfor %}
+  {% for ride in joined %}
+    <div class="card">
+      <b>{{ ride.day }} - {{ ride.date }}</b><br>
+      Parent: {{ ride.parent }}<br>
+      Area: {{ ride.area }}<br>
+      Seats left: 
+      {% if ride.available_seats == 0 %}
+        <span class="seats-low">Full</span>
+      {% else %}
+        <span class="seats-ok">{{ ride.available_seats }}</span>
+      {% endif %}
+    </div>
   {% else %}
     <p>No rides joined yet.</p>
-  {% endif %}
+  {% endfor %}
 
 </div>
 
 <div class="bottom-nav">
-  <a href="{{ url_for('dashboard') }}">🏠</a>
-  <a href="{{ url_for('view_rides') }}">🚗</a>
-  <a href="{{ url_for('my_rides') }}">📋</a>
-  <a href="{{ url_for('logout') }}">🚪</a>
+  <a href="/dashboard">🏠</a>
+  <a href="/rides">🚗</a>
+  <a href="/my-rides">📋</a>
+  <a href="/logout">🚪</a>
 </div>
 
 </body>
