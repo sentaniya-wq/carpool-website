@@ -32,10 +32,6 @@ users = db.users
 
 ADMIN_PHONE = "999999999"
 
-@app.route("/")
-def home():
-    return "Carpool App Running 🚗"
-
 # =========================
 # ABOUT
 # =========================
